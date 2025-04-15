@@ -1,5 +1,5 @@
 {
-  "name": "pw-mock-api",
+  "name": "pw-apitest-app",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,10 +8,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
-    "@types/node": "^22.13.8"
+    "@playwright/test": "1.51.0",
+    "@types/node": "^20.10.4"
   },
   "dependencies": {
-    "pw-mock-api": "file:"
+    "pw-apitest-app": "file:"
   }
 }

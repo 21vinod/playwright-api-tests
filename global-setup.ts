@@ -1,0 +1,42 @@
+import { request, expect } from "@playwright/test";
+import user from './.auth/user.json';
+import fs from 'fs';
+
+
+async function globalSetup() {
+    const authFile = '.auth/user.json'
+    const context = await request.newContext()
+
+    const responseToken = await context.post('https://conduit-api.bondaracademy.com/api/users/login', {
+        data: {
+            "user": { "email": "vinod@gmail.com", "password": "password" }
+        }
+    })
+    const responseBody = await responseToken.json()
+    console.log(responseBody)
+    const accessToken = responseBody.user.token
+    user.origins[0].localStorage[0].value = accessToken
+    fs.writeFileSync(authFile, JSON.stringify(user))
+    process.env['ACCESS_TOKEN'] = accessToken
+    console.log(accessToken)
+    const articleResponse = await context.post('https://conduit-api.bondaracademy.com/api/articles/', {
+        data: {
+            "article": { "tagList": [], "title": "Global Likes test article", "description": "This is a test description", "body": "This is a test body" }
+        },
+        headers: {
+            Authorization: `Token ${process.env.ACCESS_TOKEN}`
+        }
+    })
+    expect(articleResponse.status()).toEqual(201)
+    const response = await articleResponse.json()
+    const slugId = response.article.slug
+    process.env['SLUGID'] = slugId
+    console.log(slugId)
+}
+
+
+// {
+//     "user": { "email": "pwtest@test.com", "password": "Welcome1" }
+// }
+
+export default globalSetup;
